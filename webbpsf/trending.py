@@ -754,7 +754,7 @@ def cleanup_global_tt_for_wing_tilt(delta_opd, wing='left'):
 
 def wavefront_drift_plots(opdtable, start_time, end_time, verbose=False,
                           vmax=100, n_per_row=9,
-                          label_cid=False, label_visit=False):
+                          label_cid=False, label_visit=False, plot_corrections=False):
     """Generate plots of wavefront drifts over time.
 
     This plots the natural drift in wavefront of the observatory
@@ -829,6 +829,8 @@ def wavefront_drift_plots(opdtable, start_time, end_time, verbose=False,
 
     # Set up plot axes etc
     n_to_plot = sum(opdtable[which_opds_mask]['wfs_measurement_type'] == 'pre') - 1
+    if plot_corrections is True:
+        n_to_plot = sum(opdtable[which_opds_mask]['wfs_measurement_type'] == 'post') - 1
     nrows = int(np.ceil(n_to_plot / n_per_row))
 
     fig, axes = plt.subplots(figsize=(16, nrows*2 + 1), nrows=nrows, ncols=n_per_row,
@@ -850,7 +852,7 @@ def wavefront_drift_plots(opdtable, start_time, end_time, verbose=False,
             # Skip first row, for which we can't compute a delta to the prior
             last_date_obs = row['date_obs_mjd']
             continue
-        if row['wfs_measurement_type'] == 'post':
+        if row['wfs_measurement_type'] == 'post' and plot_corrections is False:
             # don't plot corrections, but do record the time for use in the subsequent delta
             last_date_obs = row['date_obs_mjd']
             continue
