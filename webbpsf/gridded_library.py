@@ -340,7 +340,7 @@ class CreatePSFLibrary:
                 if self.fov_pixels % 2 == 0:
                     loc += 0.5  # even arrays must be at a half pixel
 
-                meta["DET_YX{}".format(h)] = (str((loc[1], loc[0])),
+                meta["DET_YX{}".format(h)] = (str((float(loc[1]), float(loc[0]))),
                                               "The #{} PSF's (y,x) detector pixel position".format(h))
 
             meta["NUM_PSFS"] = (self.num_psfs, "The total number of fiducial PSFs")
@@ -427,9 +427,12 @@ class CreatePSFLibrary:
             and oversampling keys
         """
         try:
-            from photutils import GriddedPSFModel
+            from photutils.psf import GriddedPSFModel
         except ImportError:
-            raise ImportError("This method requires photutils >= 0.6")
+            try:
+                from photutils import GriddedPSFModel
+            except ImportError:
+                raise ImportError("This method requires photutils >= 0.6")
 
         ndd = NDData(data, meta=meta, copy=True)
 
