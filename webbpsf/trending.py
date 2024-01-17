@@ -877,10 +877,17 @@ def wavefront_drift_plots(opdtable, start_time, end_time, verbose=False,
             # Skip first row, for which we can't compute a delta to the prior
             last_date_obs = row['date_obs_mjd']
             continue
-        if row['wfs_measurement_type'] == 'post' and plot_corrections is False:
-            # don't plot corrections, but do record the time for use in the subsequent delta
-            last_date_obs = row['date_obs_mjd']
-            continue
+        if plot_corrections == False:
+            if row['wfs_measurement_type'] == 'post':
+                # don't plot corrections, but do record the time for use in the subsequent delta
+                last_date_obs = row['date_obs_mjd']
+                continue
+        else:
+            if row['wfs_measurement_type'] == 'pre':
+                # don't plot corrections, but do record the time for use in the subsequent delta
+                last_date_obs = row['date_obs_mjd']
+                continue
+
 
         vprint(row['fileName'], row['date'], row['wfs_measurement_type'])
         date = row['date']
